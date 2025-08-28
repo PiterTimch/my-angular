@@ -1,13 +1,17 @@
 import {Component, OnInit} from '@angular/core';
 import {CategoryService} from '../../../services/category.service';
+import { Category } from '../../models/Category';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
 export class Home implements OnInit{
+
+  categories: Category[] = [];
 
   constructor(private categoryService: CategoryService) { }
 
@@ -18,9 +22,13 @@ export class Home implements OnInit{
 
   getCategories() {
     this.categoryService.getCategories().subscribe(
-      data => console.log(data),
+      data => {
+        this.categories = data;
+        console.log("Отримані категорії:", this.categories);
+      },
       error => console.log(error)
     );
   }
+
 
 }
