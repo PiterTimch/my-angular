@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { ICategoryCreate } from '../../../models/Category';
 import { CategoryService } from '../../../services/category.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import {CommonModule, JsonPipe} from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create',
@@ -17,34 +18,60 @@ import {CommonModule, JsonPipe} from '@angular/common';
 export class CategoryCreate {
   category: ICategoryCreate = { name: '', slug: '' };
   imagePreview: string | ArrayBuffer | null = null;
-  errorMessage: string | null = null; // додано
+  selectedFile?: File;
+  errorMessage: string | null = null;
 
-  constructor(private categoryService: CategoryService) {}
+  constructor(private categoryService: CategoryService, private router: Router) {}
 
-  onFileSelected(event: any) {
-    if (event.target.files && event.target.files.length > 0) {
-      this.category.image = event.target.files[0];
-
-      if (this.category.image) {
-        const reader = new FileReader();
-        reader.onload = e => this.imagePreview = reader.result;
-        reader.readAsDataURL(this.category.image);
-      }
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      this.selectedFile = undefined;
+      this.category.imageFile = '';
+      this.imagePreview = null;
+      return;
     }
+
+    const file = input.files[0];
+
+    if (!file.type.startsWith('image/')) {
+      this.errorMessage = 'Можна завантажувати лише зображення';
+      return;
+    }
+
+    this.selectedFile = file;
+
+    // preview
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result;
+      this.category.imageFile = reader.result as string; // для форми, string
+    };
+    reader.readAsDataURL(file);
   }
 
   onSubmit() {
-    this.errorMessage = null; // очищаємо перед сабмітом
+    this.errorMessage = null;
 
-    this.categoryService.createCategory(this.category).subscribe({
+    const formData = new FormData();
+    formData.append('name', this.category.name);
+    formData.append('slug', this.category.slug);
+
+    if (this.selectedFile) {
+      formData.append('imageFile', this.selectedFile, this.selectedFile.name); // реальний файл для сервера
+    }
+
+    this.categoryService.createCategory(formData).subscribe({
       next: (res) => {
         console.log('Created:', res);
-        this.category = { name: '', slug: '' }; // очищаємо форму
+        this.category = { name: '', slug: '', imageFile: '' };
+        this.selectedFile = undefined;
         this.imagePreview = null;
+        this.router.navigate(['/']);
       },
       error: (err) => {
         console.error(err);
-        this.errorMessage = err.error?.message || 'Сталася помилка при створенні категорії.';
+        this.errorMessage = err.error?.message || 'Error, check all fields';
       }
     });
   }

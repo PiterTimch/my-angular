@@ -16,14 +16,7 @@ export class CategoryService {
     return this.http.get<ICategory[]>(this.apiURL + "categories/list");
   }
 
-  createCategory(category: ICategoryCreate) {
-    const formData = new FormData();
-    formData.append('name', category.name);
-    formData.append('slug', category.slug);
-
-    if (category.image) {
-      formData.append('image', category.image, category.image.name);
-    }
+  createCategory(formData: FormData) {
 
     return this.http.post(this.apiURL + "categories/create", formData);
   }

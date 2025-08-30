@@ -3,6 +3,7 @@ import {CategoryService} from '../../services/category.service';
 import {CommonModule} from '@angular/common';
 import {RouterLink} from '@angular/router';
 import {ICategory} from '../../models/Category';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -32,4 +33,5 @@ export class Home implements OnInit{
   }
 
 
+  protected readonly environment = environment;
 }
