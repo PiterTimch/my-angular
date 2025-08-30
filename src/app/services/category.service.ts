@@ -1,7 +1,7 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
-import {Category} from '../models/Category';
+import {ICategory, ICategoryCreate} from '../models/Category';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -12,7 +12,20 @@ export class CategoryService {
   private apiURL = environment.apiURL;
   constructor(private http: HttpClient) {}
 
-  getCategories() : Observable<Category[]> {
-    return this.http.get<Category[]>(this.apiURL + "categories");
+  getCategories() : Observable<ICategory[]> {
+    return this.http.get<ICategory[]>(this.apiURL + "categories/list");
   }
+
+  createCategory(category: ICategoryCreate) {
+    const formData = new FormData();
+    formData.append('name', category.name);
+    formData.append('slug', category.slug);
+
+    if (category.image) {
+      formData.append('image', category.image, category.image.name);
+    }
+
+    return this.http.post(this.apiURL + "categories/create", formData);
+  }
+
 }

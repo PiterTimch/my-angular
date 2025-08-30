@@ -1,17 +1,18 @@
 import {Component, OnInit} from '@angular/core';
 import {CategoryService} from '../../services/category.service';
-import { Category } from '../../models/Category';
 import {CommonModule} from '@angular/common';
+import {RouterLink} from '@angular/router';
+import {ICategory} from '../../models/Category';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
 export class Home implements OnInit{
 
-  categories: Category[] = [];
+  categories: ICategory[] = [];
 
   constructor(private categoryService: CategoryService) { }
 
