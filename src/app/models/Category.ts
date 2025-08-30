@@ -4,8 +4,14 @@ export interface ICategory {
   image?: string;
 }
 
+// export interface ICategoryCreate {
+//   name: string;
+//   slug: string;
+//   imageFile?: string;
+// }
+
 export interface ICategoryCreate {
   name: string;
   slug: string;
-  imageFile?: string;
+  imageFile?: File | null;
 }

@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { ICategoryCreate } from '../../../models/Category';
 import { CategoryService } from '../../../services/category.service';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import {serialize} from 'object-to-formdata';
 
 @Component({
   selector: 'app-create',
@@ -18,54 +19,55 @@ import { Router } from '@angular/router';
 export class CategoryCreate {
   category: ICategoryCreate = { name: '', slug: '' };
   imagePreview: string | ArrayBuffer | null = null;
-  selectedFile?: File;
   errorMessage: string | null = null;
 
-  constructor(private categoryService: CategoryService, private router: Router) {}
+  categoryForm: FormGroup;
 
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0) {
-      this.selectedFile = undefined;
-      this.category.imageFile = '';
+  constructor(private fb: FormBuilder,
+              private categoryService: CategoryService,
+              private router: Router) {
+    this.categoryForm = fb.group({
+      name: ['', Validators.required],
+      slug: ['', Validators.required],
+      imageFile: null
+    })
+
+  }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        this.errorMessage = 'Можна завантажувати лише зображення';
+        return;
+      }
+
+      this.categoryForm.patchValue({
+        imageFile: file
+      });
+      this.categoryForm.get('imageFile')?.updateValueAndValidity();
+      this.imagePreview = URL.createObjectURL(file);
+    }
+    else {
+      this.categoryForm.patchValue({
+        imageFile: null
+      });
       this.imagePreview = null;
-      return;
     }
-
-    const file = input.files[0];
-
-    if (!file.type.startsWith('image/')) {
-      this.errorMessage = 'Можна завантажувати лише зображення';
-      return;
-    }
-
-    this.selectedFile = file;
-
-    // preview
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.imagePreview = reader.result;
-      this.category.imageFile = reader.result as string; // для форми, string
-    };
-    reader.readAsDataURL(file);
   }
 
   onSubmit() {
+    if (this.categoryForm.invalid) {
+      return;
+    }
+
     this.errorMessage = null;
 
-    const formData = new FormData();
-    formData.append('name', this.category.name);
-    formData.append('slug', this.category.slug);
-
-    if (this.selectedFile) {
-      formData.append('imageFile', this.selectedFile, this.selectedFile.name); // реальний файл для сервера
-    }
+    const formData = serialize(this.categoryForm.value);
 
     this.categoryService.createCategory(formData).subscribe({
       next: (res) => {
-        console.log('Created:', res);
-        this.category = { name: '', slug: '', imageFile: '' };
-        this.selectedFile = undefined;
         this.imagePreview = null;
         this.router.navigate(['/']);
       },
