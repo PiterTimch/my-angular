@@ -1,0 +1,29 @@
+.home-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.test-buttons {
+  margin: 20px 0;
+}
+
+.info {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #007bff;
+}
+
+.info h3 {
+  color: #495057;
+  margin-bottom: 15px;
+}
+
+.info ol {
+  color: #6c757d;
+}
+
+.info li {
+  margin-bottom: 8px;
+}
