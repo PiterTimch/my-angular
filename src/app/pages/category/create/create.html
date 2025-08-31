@@ -4,11 +4,21 @@
   <div class="mb-3">
     <label for="name" class="form-label">Name</label>
     <input type="text" formControlName="name" class="form-control" id="name">
+    <ul *ngIf="categoryForm.get('name')?.errors as errors">
+      <li *ngFor="let error of errors | keyvalue" class="text-danger">
+        {{ error.value }}
+      </li>
+    </ul>
   </div>
 
   <div class="mb-3">
     <label for="slug" class="form-label">Slug</label>
     <input type="text" formControlName="slug" class="form-control" id="slug">
+    <ul *ngIf="categoryForm.get('slug')?.errors as errors">
+      <li *ngFor="let error of errors | keyvalue" class="text-danger">
+        {{ error.value }}
+      </li>
+    </ul>
   </div>
 
   <div class="mb-3">
@@ -16,7 +26,7 @@
     <input type="file" (change)="onFileSelected($event)" class="form-control" id="image">
   </div>
 
-  <div class="mb-3 text-center" *ngIf="categoryForm.get('imageFile')">
+  <div class="mb-3 text-center" *ngIf="imagePreview">
     <img
       [src]="imagePreview"
       alt="Preview"

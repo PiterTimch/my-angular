@@ -1,10 +1,19 @@
 import { Component } from '@angular/core';
 import { ICategoryCreate } from '../../../models/Category';
 import { CategoryService } from '../../../services/category.service';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import {serialize} from 'object-to-formdata';
+import {ErrorUtils} from '../../../utils/ErrorUtils';
 
 @Component({
   selector: 'app-create',
@@ -27,11 +36,17 @@ export class CategoryCreate {
               private categoryService: CategoryService,
               private router: Router) {
     this.categoryForm = fb.group({
-      name: ['', Validators.required],
-      slug: ['', Validators.required],
+      name: ['', this.requiredMessage('Назва є обов\'язковою')],
+      slug: ['', this.requiredMessage('Slug є обов\'язковим')],
       imageFile: null
     })
 
+  }
+
+  requiredMessage(message: string) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      return !control.value ? { message: message } : null;
+    };
   }
 
   onFileSelected(event: any) {
@@ -72,8 +87,7 @@ export class CategoryCreate {
         this.router.navigate(['/']);
       },
       error: (err) => {
-        console.error(err);
-        this.errorMessage = err.error?.message || 'Error, check all fields';
+        this.errorMessage = ErrorUtils.handleValidation(err, this.categoryForm);
       }
     });
   }
