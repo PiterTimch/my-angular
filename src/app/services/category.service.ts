@@ -21,4 +21,11 @@ export class CategoryService {
     return this.http.post(this.apiURL + "categories/create", formData);
   }
 
+  deleteCategory(id: number) {
+
+    return this.http.delete(this.apiURL + "categories/delete/", {
+      body: { id }
+    });
+  }
+
 }

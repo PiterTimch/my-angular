@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import {RouterLink, RouterOutlet} from '@angular/router';
-import {LoadingComponent} from './pages/common/loading/loading';
+import {LoadingComponent} from './components/loading/loading';
 
 @Component({
   selector: 'app-salo',
