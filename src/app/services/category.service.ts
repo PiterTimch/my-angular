@@ -33,4 +33,8 @@ export class CategoryService {
     return this.http.get<ICategory>(this.apiURL + "categories/" + slug);
   }
 
+  editCategory(formData: FormData) {
+
+    return this.http.put(this.apiURL + "categories/edit", formData);
+  }
 }

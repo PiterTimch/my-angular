@@ -1,4 +1,4 @@
-<h1 class="text-center">Category create</h1>
+<h1 class="text-center">Category edit</h1>
 
 <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="col-md-6 offset-md-3">
   <div class="mb-3">
@@ -37,5 +37,5 @@
     {{ errorMessage }}
   </div>
 
-  <button type="submit" class="btn btn-primary w-100" [disabled]="categoryForm.invalid">Create</button>
+  <button type="submit" class="btn btn-primary w-100" [disabled]="categoryForm.invalid">Edit</button>
 </form>

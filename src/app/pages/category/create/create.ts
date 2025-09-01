@@ -77,13 +77,10 @@ export class CategoryCreate {
       return;
     }
 
-    this.errorMessage = null;
-
     const formData = serialize(this.categoryForm.value);
 
     this.categoryService.createCategory(formData).subscribe({
       next: (res) => {
-        this.imagePreview = null;
         this.router.navigate(['/']);
       },
       error: (err) => {

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ICategoryCreate } from '../../../models/Category';
+import {ICategory, ICategoryCreate, ICategoryEdit} from '../../../models/Category';
 import { CategoryService } from '../../../services/category.service';
 import {
   AbstractControl,
@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
 import {serialize} from 'object-to-formdata';
 import {ErrorUtils} from '../../../utils/ErrorUtils';
+import {environment} from '../../../../environments/environment';
 
 @Component({
   selector: 'app-edit',
@@ -26,7 +27,7 @@ import {ErrorUtils} from '../../../utils/ErrorUtils';
   styleUrls: ['./edit.css']
 })
 export class CategoryEdit {
-  category: ICategoryCreate = { name: '', slug: '' };
+  category: ICategory = { name: '', slug: '', id: 0 };
   imagePreview: string | ArrayBuffer | null = null;
   errorMessage: string | null = null;
 
@@ -43,7 +44,10 @@ export class CategoryEdit {
       console.log(category);
       this.category = category;
 
+      this.imagePreview = `${environment.imagePath}/800_${this.category.image}`
+
       this.categoryForm = fb.group({
+        id: [this.category.id],
         name: [this.category.name, this.requiredMessage('Назва є обов\'язковою')],
         slug: [this.category.slug, this.requiredMessage('Slug є обов\'язковим')],
         imageFile: null
@@ -86,13 +90,10 @@ export class CategoryEdit {
       return;
     }
 
-    this.errorMessage = null;
-
     const formData = serialize(this.categoryForm.value);
 
-    this.categoryService.createCategory(formData).subscribe({
+    this.categoryService.editCategory(formData).subscribe({
       next: (res) => {
-        this.imagePreview = null;
         this.router.navigate(['/']);
       },
       error: (err) => {
