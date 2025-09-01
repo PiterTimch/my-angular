@@ -28,4 +28,9 @@ export class CategoryService {
     });
   }
 
+  getCategoryBySlug(slug: string) : Observable<ICategory> {
+
+    return this.http.get<ICategory>(this.apiURL + "categories/" + slug);
+  }
+
 }
