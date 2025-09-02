@@ -1,90 +1,36 @@
 import { Component } from '@angular/core';
-import { ICategoryCreate } from '../../../models/Category';
-import { CategoryService } from '../../../services/category.service';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  ValidationErrors,
-  Validators
-} from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import {serialize} from 'object-to-formdata';
-import {ErrorUtils} from '../../../utils/ErrorUtils';
+import { serialize } from 'object-to-formdata';
+import { ErrorUtils } from '../../../utils/ErrorUtils';
+import { CategoryService } from '../../../services/category.service';
+import {FormGroup} from '@angular/forms';
+import {CategoryFormTemplate} from '../../../components/category-form-template/category-form-template';
 
 @Component({
   selector: 'app-create',
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    CommonModule
-  ],
+  standalone: true,
+  imports: [CategoryFormTemplate],
   templateUrl: './create.html',
-  styleUrls: ['./create.css']
 })
 export class CategoryCreate {
-  category: ICategoryCreate = { name: '', slug: '' };
-  imagePreview: string | ArrayBuffer | null = null;
   errorMessage: string | null = null;
 
-  categoryForm: FormGroup;
+  constructor(
+    private categoryService: CategoryService,
+    private router: Router
+  ) {}
 
-  constructor(private fb: FormBuilder,
-              private categoryService: CategoryService,
-              private router: Router) {
-    this.categoryForm = fb.group({
-      name: ['', this.requiredMessage('Назва є обов\'язковою')],
-      slug: ['', this.requiredMessage('Slug є обов\'язковим')],
-      imageFile: null
-    })
-
-  }
-
-  requiredMessage(message: string) {
-    return (control: AbstractControl): ValidationErrors | null => {
-      return !control.value ? { message: message } : null;
-    };
-  }
-
-  onFileSelected(event: any) {
-    const file = event.target.files[0];
-
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        this.errorMessage = 'Можна завантажувати лише зображення';
-        return;
-      }
-
-      this.categoryForm.patchValue({
-        imageFile: file
-      });
-      this.categoryForm.get('imageFile')?.updateValueAndValidity();
-      this.imagePreview = URL.createObjectURL(file);
-    }
-    else {
-      this.categoryForm.patchValue({
-        imageFile: null
-      });
-      this.imagePreview = null;
-    }
-  }
-
-  onSubmit() {
-    if (this.categoryForm.invalid) {
+  onSubmit(form: FormGroup) {
+    if (form.invalid) {
       return;
     }
 
-    const formData = serialize(this.categoryForm.value);
+    const formData = serialize(form.value);
 
     this.categoryService.createCategory(formData).subscribe({
-      next: (res) => {
-        this.router.navigate(['/']);
-      },
+      next: () => this.router.navigate(['/']),
       error: (err) => {
-        this.errorMessage = ErrorUtils.handleValidation(err, this.categoryForm);
+        this.errorMessage = ErrorUtils.handleValidation(err, form);
       }
     });
   }
