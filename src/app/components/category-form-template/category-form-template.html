@@ -1,0 +1,41 @@
+<h1 class="text-center">Category {{title}}</h1>
+
+<form [formGroup]="categoryForm" (ngSubmit)="formSubmit.emit(categoryForm)" class="col-md-6 offset-md-3">
+  <div class="mb-3">
+    <label for="name" class="form-label">Name</label>
+    <input type="text" formControlName="name" class="form-control" id="name">
+    <ul *ngIf="categoryForm.get('name')?.errors as errors">
+      <li *ngFor="let error of errors | keyvalue" class="text-danger">
+        {{ error.value }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="mb-3">
+    <label for="slug" class="form-label">Slug</label>
+    <input type="text" formControlName="slug" class="form-control" id="slug">
+    <ul *ngIf="categoryForm.get('slug')?.errors as errors">
+      <li *ngFor="let error of errors | keyvalue" class="text-danger">
+        {{ error.value }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="mb-3">
+    <label for="image" class="form-label">Image</label>
+    <input type="file" (change)="onFileSelected($event)" class="form-control" id="image">
+  </div>
+
+  <div class="mb-3 text-center" *ngIf="imagePreview">
+    <img
+      [src]="imagePreview"
+      alt="Preview"
+      style="height: 200px; object-fit: cover; max-width: 100%;">
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+    {{ errorMessage }}
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100" [disabled]="categoryForm.invalid">{{title}}</button>
+</form>
