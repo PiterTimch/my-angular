@@ -4,8 +4,6 @@ import {NgClass, NgIf, NgStyle} from '@angular/common';
 @Component({
   selector: 'app-dialog-modal',
   imports: [
-    NgClass,
-    NgStyle,
     NgIf
   ],
   templateUrl: './dialog-modal.html',
