@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -49,20 +50,27 @@ export class GlobalErrorService {
   public isError = this._isError.asObservable();
   public message: string = "";
 
-  processError(errorType: any): Error {
-    const errorClass = this._errorTypeDictionary.get(errorType);
-
+  processError(err: HttpErrorResponse): HttpErrorResponse {
     this._isError.next(true);
+
+    const errorClass = this._errorTypeDictionary.get(err.status);
 
     if (errorClass) {
       const errorInstance = new errorClass();
       this.message = errorInstance.message;
-      console.log(this.message);
-      return errorInstance;
+    } else {
+      this.message = 'Problem with server';
     }
-    this.message = "Problem with server";
 
-    return new Error(this.message);
+    console.log(this.message);
+
+    return new HttpErrorResponse({
+      error: err.error,
+      headers: err.headers,
+      status: err.status,
+      statusText: err.statusText,
+      url: err.url || undefined,
+    });
   }
 
   hideError(){
