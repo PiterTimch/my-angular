@@ -11,37 +11,37 @@ export class GlobalErrorService {
   private _errorTypeDictionary = new Map<number, new (...args: any[]) => Error>([
     [0, class NetworkError extends Error {
       constructor(message?: string) {
-        super(message || 'Server is not responding. Please try again later.');
+        super(message || 'Сервер не відповідає. Спробуйте пізніше');
         this.name = 'NetworkError';
       }
     }],
     [400, class BadRequestError extends Error {
       constructor(message?: string) {
-        super(message || 'Bad Request');
+        super(message || 'Помилка запиту. Перевірте правильність введення');
         this.name = 'BadRequestError';
       }
     }],
     [401, class UnauthorizedError extends Error {
       constructor(message?: string) {
-        super(message || 'Unauthorized');
+        super(message || 'Ви не авторизовані');
         this.name = 'UnauthorizedError';
       }
     }],
     [403, class ForbiddenError extends Error {
       constructor(message?: string) {
-        super(message || 'Forbidden');
+        super(message || 'Ви не маєте доступу до цієї сторінки');
         this.name = 'ForbiddenError';
       }
     }],
     [404, class NotFoundError extends Error {
       constructor(message?: string) {
-        super(message || 'Not Found');
+        super(message || 'Не знайдено');
         this.name = 'NotFoundError';
       }
     }],
     [500, class InternalServerError extends Error {
       constructor(message?: string) {
-        super(message || 'Internal Server Error');
+        super(message || 'Проблема сервера. Спробуйте пізніше');
         this.name = 'InternalServerError';
       }
     }]
@@ -59,7 +59,7 @@ export class GlobalErrorService {
       const errorInstance = new errorClass();
       this.message = errorInstance.message;
     } else {
-      this.message = 'Problem with server';
+      this.message = 'Невідома помилка';
     }
 
     console.log(this.message);
