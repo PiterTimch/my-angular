@@ -1,1 +1,63 @@
-<p>register works!</p>
+<h1 class="text-center">Реєстрація</h1>
+
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="col-md-6 offset-md-3">
+  <div class="mb-3">
+    <label for="firstName" class="form-label">Ім’я</label>
+    <input type="text" formControlName="firstName" class="form-control" id="firstName">
+    <ul *ngIf="registerForm.get('firstName')?.touched && registerForm.get('firstName')?.errors as errors">
+      <li *ngFor="let error of errors | keyvalue" class="text-danger">
+        {{ error.value }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="mb-3">
+    <label for="lastName" class="form-label">Прізвище</label>
+    <input type="text" formControlName="lastName" class="form-control" id="lastName">
+    <ul *ngIf="registerForm.get('lastName')?.touched && registerForm.get('lastName')?.errors as errors">
+      <li *ngFor="let error of errors | keyvalue" class="text-danger">
+        {{ error.value }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="mb-3">
+    <label for="email" class="form-label">Пошта</label>
+    <input type="email" formControlName="email" class="form-control" id="email">
+    <ul *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.errors as errors">
+      <li *ngFor="let error of errors | keyvalue" class="text-danger">
+        {{ error.value }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="mb-3">
+    <label for="password" class="form-label">Пароль</label>
+    <input type="password" formControlName="password" class="form-control" id="password">
+    <ul *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.errors as errors">
+      <li *ngFor="let error of errors | keyvalue" class="text-danger">
+        {{ error.value }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="mb-3">
+    <label for="imageFile" class="form-label">Аватар</label>
+    <input type="file" (change)="onFileSelected($event)" class="form-control" id="imageFile">
+  </div>
+
+  <div class="mb-3 text-center" *ngIf="imagePreview">
+    <img
+      [src]="imagePreview"
+      alt="Preview"
+      style="height: 200px; object-fit: cover; max-width: 100%;">
+  </div>
+
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+    {{ errorMessage }}
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid">
+    Зареєструватися
+  </button>
+</form>
