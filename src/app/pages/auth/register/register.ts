@@ -6,6 +6,7 @@ import {serialize} from 'object-to-formdata';
 import {ErrorUtils} from '../../../utils/ErrorUtils';
 import {Router} from '@angular/router';
 import {KeyValuePipe, NgForOf, NgIf} from '@angular/common';
+import {IRegister} from '../../../models/Account';
 
 @Component({
   selector: 'app-register',
@@ -59,9 +60,9 @@ export class Register {
       return;
     }
 
-    const formData = serialize(this.registerForm.value);
+    const model = this.registerForm.value as IRegister;
 
-    this.accountService.registerUser(formData).subscribe({
+    this.accountService.registerUser(model).subscribe({
       next: () => this.router.navigate(['/']),
       error: (err) => {
         this.errorMessage = ErrorUtils.handleValidation(err, this.registerForm);
