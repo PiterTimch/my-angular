@@ -7,6 +7,11 @@ import {ErrorUtils} from '../../../utils/ErrorUtils';
 import {Router} from '@angular/router';
 import {KeyValuePipe, NgForOf, NgIf} from '@angular/common';
 import {IRegister} from '../../../models/Account';
+import {AuthService} from '../../../services/authService';
+
+export interface IResponse {
+  token: string;
+}
 
 @Component({
   selector: 'app-register',
@@ -30,7 +35,10 @@ export class Register {
     };
   }
 
-  constructor(private fb: FormBuilder, private accountService: AccountService, private router: Router) {
+  constructor(private fb: FormBuilder,
+              private accountService: AccountService,
+              private router: Router,
+              private authService: AuthService) {
     this.registerForm = this.fb.group({
       firstName: ['', this.requiredMessage('Ім\'я є обов\'язковим')],
       lastName: ['', this.requiredMessage('Прізвище є обов\'язковим')],
@@ -63,7 +71,11 @@ export class Register {
     const model = this.registerForm.value as IRegister;
 
     this.accountService.registerUser(model).subscribe({
-      next: () => this.router.navigate(['/']),
+      next: (res) => {
+        console.log(res);
+        this.authService.loginUser((res as IResponse).token);
+        this.router.navigate(['/']);
+      },
       error: (err) => {
         this.errorMessage = ErrorUtils.handleValidation(err, this.registerForm);
       }

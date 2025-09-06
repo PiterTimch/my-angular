@@ -3,6 +3,7 @@ import {Injectable} from '@angular/core';
 import { environment } from '../../environments/environment';
 import {IRegister} from '../models/Account';
 import {serialize} from 'object-to-formdata';
+import {IResponse} from '../pages/auth/register/register';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,6 @@ export class AccountService {
 
   registerUser(model: IRegister) {
     const formData = serialize(model);
-    return this.http.post(this.apiURL + "register", formData);
+    return this.http.post<IResponse>(this.apiURL + "register", formData);
   }
 }
