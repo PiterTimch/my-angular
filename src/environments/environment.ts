@@ -1,4 +1,4 @@
-const baseUrl = 'https://172.18.160.122:4098';
+const baseUrl = 'http://172.18.160.122:4098';
 
 export const environment = {
   production: true,
